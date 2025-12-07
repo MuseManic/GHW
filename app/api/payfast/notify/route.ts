@@ -1,0 +1,113 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyPayFastSignature, getPayFastConfig } from '@/lib/payfast';
+import axios from 'axios';
+
+export const dynamic = 'force-dynamic';
+
+/**
+ * PayFast IPN (Instant Payment Notification) Handler
+ * This is called by PayFast when payment status changes
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const data: Record<string, string> = {};
+    
+    formData.forEach((value, key) => {
+      data[key] = value.toString();
+    });
+
+    console.log('PayFast IPN received:', {
+      payment_status: data.payment_status,
+      m_payment_id: data.m_payment_id,
+      amount_gross: data.amount_gross
+    });
+
+    // Extract signature
+    const signature = data.signature;
+    delete data.signature;
+
+    // Verify signature
+    const config = getPayFastConfig();
+    const isValid = verifyPayFastSignature(data, signature, config.passphrase);
+
+    if (!isValid) {
+      console.error('Invalid PayFast signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    }
+
+    // Verify payment status with PayFast server
+    const pfHost = config.sandbox 
+      ? 'https://sandbox.payfast.co.za'
+      : 'https://www.payfast.co.za';
+
+    const pfParamString = new URLSearchParams(data).toString();
+    
+    try {
+      const validationResponse = await axios.post(
+        `${pfHost}/eng/query/validate`,
+        pfParamString,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      );
+
+      if (validationResponse.data !== 'VALID') {
+        console.error('PayFast validation failed:', validationResponse.data);
+        return NextResponse.json({ error: 'Validation failed' }, { status: 400 });
+      }
+    } catch (validationError) {
+      console.error('PayFast validation error:', validationError);
+      // Continue anyway in sandbox mode
+      if (!config.sandbox) {
+        return NextResponse.json({ error: 'Validation error' }, { status: 500 });
+      }
+    }
+
+    // Payment is valid - update order status in WooCommerce
+    const orderId = data.m_payment_id;
+    const paymentStatus = data.payment_status;
+
+    console.log('Valid PayFast payment:', {
+      orderId,
+      status: paymentStatus,
+      amount: data.amount_gross
+    });
+
+    // Update WooCommerce order status
+    if (paymentStatus === 'COMPLETE') {
+      try {
+        await axios.put(
+          `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wc/v3/orders/${orderId}`,
+          {
+            status: 'processing',
+            transaction_id: data.pf_payment_id,
+            set_paid: true
+          },
+          {
+            auth: {
+              username: process.env.WORDPRESS_API_USERNAME || '',
+              password: process.env.WORDPRESS_API_PASSWORD || ''
+            }
+          }
+        );
+
+        console.log('Order updated in WooCommerce:', orderId);
+      } catch (wcError: any) {
+        console.error('Failed to update WooCommerce order:', wcError.response?.data || wcError.message);
+      }
+    }
+
+    // Return 200 OK to PayFast
+    return NextResponse.json({ success: true });
+
+  } catch (error: any) {
+    console.error('PayFast IPN error:', error);
+    return NextResponse.json(
+      { error: 'IPN processing failed' },
+      { status: 500 }
+    );
+  }
+}
