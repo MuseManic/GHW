@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
 import Footer from '@/components/footer';
@@ -29,7 +29,7 @@ interface Order {
   transaction_id: string;
 }
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get('order_id');
@@ -261,5 +261,24 @@ export default function OrderConfirmationPage() {
       </div>
       <Footer />
     </>
+  );
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <NavBar />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading order details...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    }>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }
