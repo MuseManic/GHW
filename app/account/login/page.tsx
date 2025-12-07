@@ -2,11 +2,11 @@
 'use client'
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login: authLogin } = useAuth();
@@ -57,15 +57,15 @@ export default function Login() {
   };
 
   return (
-      <main
-        className="min-h-screen flex items-center justify-center bg-gray-50 px-4"
-        style={{
-          backgroundImage: "url('/images/Botaani-26.jpg')",
-          backgroundSize: '500%',      
-          backgroundPosition: 'top right',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
+    <main
+      className="min-h-screen flex items-center justify-center bg-gray-50 px-4"
+      style={{
+        backgroundImage: "url('/images/Botaani-26.jpg')",
+        backgroundSize: '500%',      
+        backgroundPosition: 'top right',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
@@ -205,5 +205,13 @@ export default function Login() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
