@@ -168,8 +168,13 @@ export default function CheckoutPage() {
     }
 
     // Recalculate shipping when address fields change
-    if (['shippingCity', 'shippingProvince', 'shippingPostalCode', 'billingCity', 'billingProvince', 'billingPostalCode', 'sameAsShipping'].includes(name)) {
+    if (['shippingCity', 'shippingProvince', 'shippingPostalCode', 'billingCity', 'billingProvince', 'billingPostalCode'].includes(name)) {
       setTimeout(calculateShipping, 500); // Debounce
+    }
+    
+    // Calculate immediately when "same as billing" checkbox is toggled
+    if (name === 'sameAsShipping') {
+      calculateShipping();
     }
   };
 
