@@ -1,0 +1,32 @@
+{
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_WORDPRESS_URL": "@wordpress_url",
+    "NEXT_PUBLIC_WORDPRESS_API_URL": "@wordpress_api_url",
+    "WORDPRESS_USERNAME": "@wordpress_username",
+    "WORDPRESS_PASSWORD": "@wordpress_password",
+    "CONSUMER_KEY": "@consumer_key",
+    "CONSUMER_SECRET": "@consumer_secret",
+    "JWT_SECRET": "@jwt_secret",
+    "PAYFAST_MERCHANT_ID": "@payfast_merchant_id",
+    "PAYFAST_MERCHANT_KEY": "@payfast_merchant_key",
+    "PAYFAST_PASSPHRASE": "@payfast_passphrase",
+    "PAYFAST_SANDBOX": "@payfast_sandbox",
+    "NEXT_PUBLIC_BASE_URL": "@next_public_base_url",
+    "NEXT_PUBLIC_ACF_ENABLED": "@next_public_acf_enabled",
+    "NEXT_PUBLIC_CACHE_REVALIDATE": "@next_public_cache_revalidate"
+  },
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

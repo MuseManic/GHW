@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
       },
       {
         auth: {
-          username: process.env.WORDPRESS_API_USERNAME || '',
-          password: process.env.WORDPRESS_API_PASSWORD || ''
+          username: process.env.CONSUMER_KEY || '',
+          password: process.env.CONSUMER_SECRET || ''
         }
       }
     );

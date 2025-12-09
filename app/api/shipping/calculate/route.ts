@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
 
     const baseURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
     const auth = {
-      username: process.env.WORDPRESS_API_USERNAME || '',
-      password: process.env.WORDPRESS_API_PASSWORD || ''
+      username: process.env.WORDPRESS_USERNAME || '',
+      password: process.env.WORDPRESS_PASSWORD || ''
     };
 
     // Get shipping zones

@@ -17,8 +17,8 @@ export async function GET(
       `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wc/v3/orders/${orderId}`,
       {
         auth: {
-          username: process.env.WORDPRESS_API_USERNAME || '',
-          password: process.env.WORDPRESS_API_PASSWORD || ''
+          username: process.env.CONSUMER_KEY || '',
+          password: process.env.CONSUMER_SECRET || ''
         }
       }
     );
