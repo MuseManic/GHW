@@ -30,16 +30,39 @@ export function generatePayFastSignature(
   data: Partial<PayFastData>,
   passphrase?: string
 ): string {
+  // PayFast signature fields in the order they appear in the documentation
+  // Do NOT use alphabetical ordering - PayFast requires documentation order
+  const signatureFields = [
+    'merchant_id',
+    'merchant_key',
+    'return_url',
+    'cancel_url',
+    'notify_url',
+    'name_first',
+    'name_last',
+    'email_address',
+    'cell_number',
+    'm_payment_id',
+    'amount',
+    'item_name',
+    'item_description',
+    'custom_int1',
+    'custom_str1',
+    'email_confirmation',
+    'confirmation_address'
+  ];
+
   // Create parameter string
   let pfOutput = '';
   
-  // Sort keys alphabetically
-  const sortedKeys = Object.keys(data).sort();
-  
-  for (const key of sortedKeys) {
+  // Build string with only signature fields, in order
+  for (const key of signatureFields) {
     const value = data[key as keyof PayFastData];
     if (value !== undefined && value !== '') {
-      pfOutput += `${key}=${encodeURIComponent(value.toString().trim()).replace(/%20/g, '+')}&`;
+      // URL-encode values as per PayFast requirements
+      // Spaces must be encoded as '+', not '%20'
+      const encoded = encodeURIComponent(value.toString().trim()).replace(/%20/g, '+');
+      pfOutput += `${key}=${encoded}&`;
     }
   }
 
@@ -48,7 +71,8 @@ export function generatePayFastSignature(
 
   // Append passphrase if provided
   if (passphrase) {
-    pfOutput += `&passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, '+')}`;
+    const encodedPassphrase = encodeURIComponent(passphrase.trim()).replace(/%20/g, '+');
+    pfOutput += `&passphrase=${encodedPassphrase}`;
   }
 
   // Debug logging
