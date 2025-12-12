@@ -3,6 +3,7 @@ import { verifyPayFastSignature, getPayFastConfig } from '@/lib/payfast';
 import axios from 'axios';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // Allow up to 60 seconds for processing
 
 /**
  * PayFast IPN (Instant Payment Notification) Handler
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Payment is valid - update order status in WooCommerce
+    // Payment is valid
     const orderId = data.m_payment_id;
     const paymentStatus = data.payment_status;
 
@@ -76,31 +77,15 @@ export async function POST(request: NextRequest) {
       amount: data.amount_gross
     });
 
-    // Update WooCommerce order status
+    // Return 200 OK to PayFast immediately
+    // Process WooCommerce update asynchronously to avoid timeout
     if (paymentStatus === 'COMPLETE') {
-      try {
-        await axios.put(
-          `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wc/v3/orders/${orderId}`,
-          {
-            status: 'processing',
-            transaction_id: data.pf_payment_id,
-            set_paid: true
-          },
-          {
-            auth: {
-              username: process.env.WORDPRESS_API_USERNAME || '',
-              password: process.env.WORDPRESS_API_PASSWORD || ''
-            }
-          }
-        );
-
-        console.log('Order updated in WooCommerce:', orderId);
-      } catch (wcError: any) {
-        console.error('Failed to update WooCommerce order:', wcError.response?.data || wcError.message);
-      }
+      // Fire and forget - don't await this
+      updateWooCommerceOrder(orderId, data.pf_payment_id).catch((error) => {
+        console.error('Async WooCommerce update failed:', error);
+      });
     }
 
-    // Return 200 OK to PayFast
     return NextResponse.json({ success: true });
 
   } catch (error: any) {
@@ -109,5 +94,44 @@ export async function POST(request: NextRequest) {
       { error: 'IPN processing failed' },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Update WooCommerce order asynchronously
+ * This runs in the background to avoid timeout issues
+ */
+async function updateWooCommerceOrder(orderId: string, paymentId: string): Promise<void> {
+  try {
+    const username = process.env.WORDPRESS_USERNAME;
+    const password = process.env.WORDPRESS_PASSWORD;
+
+    if (!username || !password) {
+      console.warn('WordPress credentials not configured, skipping order update');
+      return;
+    }
+
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wc/v3/orders/${orderId}`,
+      {
+        status: 'processing',
+        transaction_id: paymentId,
+        set_paid: true
+      },
+      {
+        auth: {
+          username,
+          password
+        },
+        timeout: 10000 // 10 second timeout
+      }
+    );
+
+    console.log('Order updated in WooCommerce:', orderId);
+  } catch (error: any) {
+    console.error('Failed to update WooCommerce order:', {
+      orderId,
+      error: error.response?.data || error.message
+    });
   }
 }
