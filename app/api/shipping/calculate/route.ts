@@ -85,6 +85,11 @@ export async function POST(request: NextRequest) {
     );
 
     console.log('Shipping methods found:', methodsResponse.data.length);
+    console.log('Raw methods:', JSON.stringify(methodsResponse.data.map((m: any) => ({
+      title: m.method_title,
+      enabled: m.enabled,
+      cost: m.settings?.cost?.value
+    })), null, 2));
 
     // Filter enabled methods and format response
     const shippingMethods = methodsResponse.data
@@ -96,6 +101,8 @@ export async function POST(request: NextRequest) {
         cost: parseFloat(method.settings?.cost?.value || '0'),
         description: method.method_description || ''
       }));
+
+    console.log('Formatted shipping methods:', JSON.stringify(shippingMethods, null, 2));
 
     return NextResponse.json({
       success: true,

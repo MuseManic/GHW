@@ -4,7 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "Botnaani",
+  title: "Botaani",
   description: "Ground Focused ...",
 };
 

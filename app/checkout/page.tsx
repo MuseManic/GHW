@@ -79,6 +79,11 @@ export default function CheckoutPage() {
     }
   }, [user, loading, router]);
 
+  // Recalculate shipping when sameAsShipping checkbox changes
+  useEffect(() => {
+    calculateShipping();
+  }, [formData.sameAsShipping]);
+
   // Show loading state while checking authentication
   if (loading) {
     return (
@@ -621,34 +626,46 @@ export default function CheckoutPage() {
                     <span>Calculating shipping rates...</span>
                   </div>
                 ) : shippingMethods.length > 0 ? (
-                  <div className="space-y-3">
-                    {shippingMethods.map((method) => (
-                      <label
-                        key={method.instance_id}
-                        className={`flex items-center justify-between p-4 border-2 rounded-lg cursor-pointer transition ${
-                          selectedShipping?.instance_id === method.instance_id
-                            ? 'border-amber-500 bg-amber-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="shipping"
-                            checked={selectedShipping?.instance_id === method.instance_id}
-                            onChange={() => setSelectedShipping(method)}
-                            className="w-5 h-5 cursor-pointer"
-                            style={{ accentColor: 'var(--brand)' }}
-                          />
-                          <div>
-                            <div className="font-semibold text-gray-900">{method.title}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {shippingMethods.map((method) => {
+                      // Simplify method titles for display
+                      const isExpressMethod = method.title.includes('SPX') || method.title.includes('AIR');
+                      const displayLabel = isExpressMethod ? 'Priority (Next Day)' : 'Normal (3-5 Days)';
+                      const displayDescription = isExpressMethod 
+                        ? 'Fast delivery to your doorstep' 
+                        : 'Standard delivery';
+
+                      return (
+                        <label
+                          key={method.instance_id}
+                          className={`flex flex-col p-5 border-2 rounded-lg cursor-pointer transition ${
+                            selectedShipping?.instance_id === method.instance_id
+                              ? 'border-amber-500 bg-amber-50'
+                              : 'border-gray-200 hover:border-amber-300'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3 mb-3">
+                            <input
+                              type="radio"
+                              name="shipping"
+                              checked={selectedShipping?.instance_id === method.instance_id}
+                              onChange={() => setSelectedShipping(method)}
+                              className="w-5 h-5 cursor-pointer mt-0.5"
+                              style={{ accentColor: 'var(--brand)' }}
+                            />
+                            <div className="flex-1">
+                              <div className="font-bold text-lg text-gray-900">{displayLabel}</div>
+                              <div className="text-sm text-gray-600">{displayDescription}</div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="font-bold text-gray-900">
-                          R{method.cost.toFixed(2)}
-                        </div>
-                      </label>
-                    ))}
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-gray-900">
+                              R{method.cost.toFixed(2)}
+                            </div>
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-gray-600">
