@@ -11,6 +11,10 @@
   --mist: #E6F0EE;
   --porcelain: #FAF9F7;
   --leaf: #3D7F5f;
+  --hessian:#BFA06F;
+
+
+/* #d1b07e */
 
 }
 
@@ -82,6 +86,41 @@ body {
     filter: drop-shadow(0 0 0px var(--gold)) drop-shadow(0 0 10px var(--gold));
   }
 }
+
+@keyframes floatInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-300px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInStaggered {
+  from {
+    opacity: 0;
+    transform: translateX(-500px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.product-item {
+  animation: slideInStaggered 1.2s ease-out forwards;
+}
+
+.product-item:nth-child(1) { animation-delay: 0s; }
+.product-item:nth-child(2) { animation-delay: 0.2s; }
+.product-item:nth-child(3) { animation-delay: 0.4s; }
+.product-item:nth-child(4) { animation-delay: 0.6s; }
+.product-item:nth-child(5) { animation-delay: 0.8s; }
+.product-item:nth-child(6) { animation-delay: 1s; }
+.product-item:nth-child(7) { animation-delay: 1.2s; }
+.product-item:nth-child(8) { animation-delay: 1.4s; }
 
 /* 3D Flip Utilities */
 .preserve-3d {

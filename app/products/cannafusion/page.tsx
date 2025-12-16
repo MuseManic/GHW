@@ -8,7 +8,7 @@ export default function CannafusionPage() {
       subtitle="Wellness Oil with THCa"
       price={1500}
       category="Cannafusion"
-      image="/front-bottle.jpg"
+      image="/Cannafusion-ext.jpeg"
       badges={['Vegan', '18+', '15ml']}
       slug="botaani-cannafusion"
       description={`Simple. Composed. Considered. Botaani Cannafusion is a glycerin-based wellness oil intended for adults who want a clean, minimal approach. Each 15 mL bottle contains trace elements of THCa, alkaloids, flavonoids and terpenes delivering a non-psychoactive* botanical infusion with an elegant, lightly sweet taste.

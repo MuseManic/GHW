@@ -66,9 +66,24 @@ export async function registerWordPressUser(
       data: error.response?.data,
       message: error.message,
     });
+    
+    // Clean up WordPress error messages
+    let errorMessage = error.response?.data?.message || error.message || 'Registration failed';
+    
+    // Transform common WordPress password errors to user-friendly messages
+    if (errorMessage.includes('password') && errorMessage.includes('strong')) {
+      errorMessage = 'Password must be stronger. Please use at least 8 characters with a mix of letters, numbers, and symbols.';
+    } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
+      errorMessage = 'Password is too weak. Please use at least 8 characters with a mix of letters, numbers, and symbols.';
+    } else if (errorMessage.includes('email') && errorMessage.includes('exists')) {
+      errorMessage = 'This email is already registered. Please login or use a different email.';
+    } else if (errorMessage.includes('username') && errorMessage.includes('exists')) {
+      errorMessage = 'This account already exists. Please login or use a different email.';
+    }
+    
     return {
       success: false,
-      message: error.response?.data?.message || error.message || 'Registration failed',
+      message: errorMessage,
     };
   }
 }
@@ -104,7 +119,7 @@ export async function authenticateWordPressUser(
       console.error('❌ User not found with email:', email);
       return {
         success: false,
-        message: 'Wrong email or password',
+        message: 'Incorrect email or password. Please try again.',
       };
     }
 
@@ -193,7 +208,7 @@ export async function authenticateWordPressUser(
     if (!passwordVerified) {
       return {
         success: false,
-        message: 'Wrong email or password',
+        message: 'Incorrect email or password. Please try again.',
       };
     }
 

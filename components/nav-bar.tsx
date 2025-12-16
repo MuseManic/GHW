@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 
 interface Product {
   id: string;
+  slug: string;
   name: string;
   image: string;
   description: string;
@@ -18,8 +19,9 @@ const products = {
   cannafusion: [
     {
       id: '94',
+      slug: 'cannafusion',
       name: 'Botaani Cannafusion',
-      image: '/front-bottle.jpg',
+      image: '/Cannafusion-ext.jpeg',
       description: 'Wellness oil with THCa',
       price: 1500
     }
@@ -27,13 +29,15 @@ const products = {
   beautanicals: [
     {
       id: '810',
+      slug: 'botaani-serum',
       name: 'Botaani Serum',
-      image: '/serum.jpg',
+      image: '/Serum.jpeg',
       description: 'Lightweight facial serum',
       price: 799
     },
     {
       id: '816',
+      slug: 'botaani-face',
       name: 'Botaani Face',
       image: '/face.png',
       description: 'Daily face care',
@@ -41,8 +45,9 @@ const products = {
     },
     {
       id: '817',
+      slug: 'botaani-body',
       name: 'Botaani Body',
-      image: '/body.jpg',
+      image: '/bod.jpeg',
       description: 'Body care formula',
       price: 499
     }
@@ -122,7 +127,7 @@ export default function NavBar() {
         <h3 className="text-xl font-light text-gray-900 mb-8">{title}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((product) => (
-            <Link key={product.id} href={`/products/${product.id}`}>
+            <Link key={product.id} href={`/products/${product.slug}`}>
               <ProductCard product={product} />
             </Link>
           ))}
@@ -143,24 +148,25 @@ export default function NavBar() {
         }
       `}</style>
       {/* Top Layer - Black Bar with Logo */}
-      <div className="bg-black text-white px-3 sm:px-6 py-4 sm:py-5 flex justify-center items-center relative"   style={{
-          backgroundImage: "url('/images/Botaani-26.jpg')",
-          backgroundSize: '500%',      
-          backgroundPosition: 'top right',
-          backgroundRepeat: 'no-repeat'
-        }}>
+      <div className="text-white px-0 sm:px-0 py-2 sm:py-2 flex justify-center items-center relative"    style={{
+        // backgroundImage: "url('/header.jpeg')",
+        // backgroundSize: 'cover',      
+        // backgroundPosition: 'center',
+        // backgroundRepeat: 'no-repeat'
+        backgroundColor: 'WHITE'
+      }}>
       
       {/* Hamburger Menu - Left */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute left-3 sm:left-6 text-xl sm:text-2xl cursor-pointer hover:text-[var(--gold)] transition"
+          className="absolute left-3 sm:left-6 text-xl sm:text-2xl cursor-pointer hover:text-[var(--gold)] transition text-black"
         >
           ☰
         </button>
 
          {/* Logo - Center */}
-        <Link href="/" className="text-2xl sm:text-3xl font-bold text-white hover:text-[var(--gold)] transition" style={{ fontFamily: 'Botaani, sans-serif', letterSpacing: '0.25em' }}>
-          BOTAANI
+        <Link href="/" className="hover:opacity-80 transition pb-2 ">
+          <img src="/Botaani Logo.png" alt="Botaani" className="h-8 sm:h-8 w-56" />
         </Link>
 
         <div className="absolute right-3 sm:right-6 flex items-center gap-4 sm:gap-8">
@@ -168,9 +174,10 @@ export default function NavBar() {
           <div className="relative">
             <button
               onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-              className="hover:text-[var(--gold)] transition text-sm sm:text-base flex items-center gap-1" style={{ fontFamily: 'Botaani, sans-serif', letterSpacing: '0.25em' }}
+              className="hover:text-[var(--gold)] transition text-lg sm:text-xl flex items-center gap-1"
+              title={user ? 'Account' : 'Login / Register'}
             >
-              {user ? user.username : 'Account'}
+              {user ? '👤' : 'Account'}
             </button>
             {accountDropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg z-50">
@@ -248,11 +255,7 @@ export default function NavBar() {
             sidebarOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
           style={{
-            backgroundImage: "url('/images/Botaani-26.jpg')",
-            backgroundSize: '450%',
-            backgroundPosition: 'top right',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: '#000000'
+            backgroundColor: 'var(--hessian)'
           }}
         >
           <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Botaani, sans-serif', letterSpacing: '0.25em' }}>
@@ -291,7 +294,7 @@ export default function NavBar() {
             onMouseLeave={() => setHoveredCategory(null)}
           >
             <Link
-              href="/products/cannafusion"
+              href={`/products/${products.cannafusion[0].slug}`}
               onClick={() => setSidebarOpen(false)}
               className="text-lg font-semibold text-gray-900 mb-4 block hover:text-amber-600 transition"
             >
@@ -304,7 +307,7 @@ export default function NavBar() {
                   className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-amber-50 transition group"
                 >
                   <Link
-                    href={`/products/cannafusion`}
+                    href={`/products/${product.slug}`}
                     onClick={() => setSidebarOpen(false)}
                     className="flex-1"
                   >
@@ -340,7 +343,7 @@ export default function NavBar() {
                   className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-amber-50 transition group"
                 >
                   <Link
-                    href={`/products/beautanicals/${product.id}`}
+                    href={`/products/beautanicals/${product.slug}`}
                     onClick={() => setSidebarOpen(false)}
                     className="flex-1"
                   >

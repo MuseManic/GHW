@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
@@ -72,41 +72,8 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Protect route - redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/account/login?redirect=/checkout');
-    }
-  }, [user, loading, router]);
-
-  // Recalculate shipping when sameAsShipping checkbox changes
-  useEffect(() => {
-    calculateShipping();
-  }, [formData.sameAsShipping]);
-
-  // Show loading state while checking authentication
-  if (loading) {
-    return (
-      <>
-        <NavBar />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
-
-  // Don't render checkout form if not authenticated
-  if (!user) {
-    return null;
-  }
-
   // Calculate shipping rates
-  const calculateShipping = async () => {
+  const calculateShipping = useCallback(async () => {
     const shippingAddress = formData.sameAsShipping ? {
       city: formData.billingCity,
       state: formData.billingProvince,
@@ -152,7 +119,40 @@ export default function CheckoutPage() {
     } finally {
       setLoadingShipping(false);
     }
-  };
+  }, [formData, cartItems, selectedShipping]);
+
+  // Protect route - redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/account/login?redirect=/checkout');
+    }
+  }, [user, loading, router]);
+
+  // Recalculate shipping when sameAsShipping checkbox changes
+  useEffect(() => {
+    calculateShipping();
+  }, [formData.sameAsShipping, calculateShipping]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <>
+        <NavBar />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // Don't render checkout form if not authenticated
+  if (!user) {
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -293,6 +293,18 @@ export default function CheckoutPage() {
       if (data.success) {
         console.log('Order created:', data);
         
+        // Calculate total including shipping
+        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shippingCost = selectedShipping ? selectedShipping.cost : 0;
+        const totalAmount = subtotal + shippingCost;
+        
+        console.log('Payment calculation:', {
+          subtotal,
+          shipping: shippingCost,
+          total: totalAmount,
+          wocommerceTotal: data.total
+        });
+        
         // Initiate PayFast payment
         const paymentResponse = await fetch('/api/payfast/initiate', {
           method: 'POST',
@@ -301,7 +313,7 @@ export default function CheckoutPage() {
           },
           body: JSON.stringify({
             orderId: data.order_id.toString(),
-            amount: parseFloat(data.total),
+            amount: totalAmount,
             itemName: `Order #${data.order_id}`,
             itemDescription: `Botaani Order #${data.order_id}`,
             firstName: formData.billingFirstName,

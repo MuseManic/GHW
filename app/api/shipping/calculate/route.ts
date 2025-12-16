@@ -15,7 +15,7 @@ interface CalculateShippingRequest {
 }
 
 /**
- * Calculate shipping rates using WooCommerce shipping zones and methods
+ * Calculate shipping rates - flat R120 rate
  */
 export async function POST(request: NextRequest) {
   try {
@@ -29,80 +29,18 @@ export async function POST(request: NextRequest) {
       items: body.items.length
     });
 
-    const baseURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-    const auth = {
-      username: process.env.WORDPRESS_USERNAME || '',
-      password: process.env.WORDPRESS_PASSWORD || ''
-    };
-
-    // Get shipping zones
-    const zonesResponse = await axios.get(`${baseURL}/wc/v3/shipping/zones`, {
-      auth
-    });
-
-    console.log('Shipping zones found:', zonesResponse.data.length);
-
-    // Find matching zone for the address
-    let matchingZone = null;
-    for (const zone of zonesResponse.data) {
-      const locationsResponse = await axios.get(
-        `${baseURL}/wc/v3/shipping/zones/${zone.id}/locations`,
-        { auth }
-      );
-
-      // Check if address matches this zone
-      for (const location of locationsResponse.data) {
-        if (location.type === 'country' && location.code === body.country) {
-          matchingZone = zone;
-          break;
-        }
-        if (location.type === 'state' && location.code === `${body.country}:${body.state}`) {
-          matchingZone = zone;
-          break;
-        }
-        if (location.type === 'postcode' && location.code === body.postcode) {
-          matchingZone = zone;
-          break;
-        }
+    // Return flat R120 shipping rate
+    const shippingMethods = [
+      {
+        id: 'flat_rate',
+        instance_id: 1,
+        title: 'Shipping',
+        cost: 120,
+        description: 'Standard shipping'
       }
-      if (matchingZone) break;
-    }
+    ];
 
-    if (!matchingZone) {
-      console.log('No matching shipping zone found');
-      return NextResponse.json({
-        success: true,
-        methods: []
-      });
-    }
-
-    console.log('Matching zone:', matchingZone.name);
-
-    // Get shipping methods for the zone
-    const methodsResponse = await axios.get(
-      `${baseURL}/wc/v3/shipping/zones/${matchingZone.id}/methods`,
-      { auth }
-    );
-
-    console.log('Shipping methods found:', methodsResponse.data.length);
-    console.log('Raw methods:', JSON.stringify(methodsResponse.data.map((m: any) => ({
-      title: m.method_title,
-      enabled: m.enabled,
-      cost: m.settings?.cost?.value
-    })), null, 2));
-
-    // Filter enabled methods and format response
-    const shippingMethods = methodsResponse.data
-      .filter((method: any) => method.enabled)
-      .map((method: any) => ({
-        id: method.method_id,
-        instance_id: method.instance_id,
-        title: method.method_title,
-        cost: parseFloat(method.settings?.cost?.value || '0'),
-        description: method.method_description || ''
-      }));
-
-    console.log('Formatted shipping methods:', JSON.stringify(shippingMethods, null, 2));
+    console.log('Shipping method:', JSON.stringify(shippingMethods, null, 2));
 
     return NextResponse.json({
       success: true,

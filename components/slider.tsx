@@ -49,7 +49,7 @@ export default function Slider({ images, autoPlay = true, interval = 5000 }: Sli
   }
 
   return (
-    <div className="relative w-full h-80 sm:h-64 md:h-128 overflow-hidden rounded-lg shadow-lg bg-gray-300">
+    <div className="relative w-full h-80 sm:h-64 md:h-128 overflow-hidden shadow-lg bg-gray-300">
       {images.map((image, index) => (
         <div
           key={index}

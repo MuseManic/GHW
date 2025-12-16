@@ -30,7 +30,9 @@ export default function DynamicProductPage() {
     async function fetchProduct() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products?slug=${slug}`);
+        const response = await fetch(`/api/products?slug=${slug}&t=${Date.now()}`, {
+          cache: 'no-store'
+        });
         
         if (!response.ok) {
           throw new Error('Product not found');

@@ -60,10 +60,7 @@ export default function Footer() {
             <div 
                 className="w-full py-6 px-6 text-left"
               style={{
-                backgroundImage: "url('/images/Botaani-26.jpg')",
-                backgroundSize: '500%',      
-                backgroundPosition: 'top right',
-                backgroundRepeat: 'no-repeat'
+                backgroundColor: 'var(--hessian)'
                 }}
             >
                 <div className="max-w-7xl mx-auto">

@@ -9,9 +9,10 @@ interface ItemContainerProps {
   title: string;
   description: string;
   price: number;
+  href?: string;
 }
 
-export default function ItemContainer({ image, title, description, price }: ItemContainerProps) {
+export default function ItemContainer({ image, title, description, price, href }: ItemContainerProps) {
   const [quantity, setQuantity] = useState(1);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -39,8 +40,11 @@ export default function ItemContainer({ image, title, description, price }: Item
 
   return (
     <div
-      className="relative w-80 h-[600px] preserve-3d transition-transform duration-700"
-      style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)', boxShadow: '0 0 0 0px var(--gold)' }}
+      className="relative w-80 h-[600px] product-item rounded-lg"
+      style={{ 
+        perspective: '1000px',
+        boxShadow: '0 0 0 0px var(--gold)'
+      }}
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = '0 0 40px 4px var(--gold)';
       }}
@@ -48,11 +52,18 @@ export default function ItemContainer({ image, title, description, price }: Item
         e.currentTarget.style.boxShadow = '0 0 0 0px var(--gold)';
       }}
     >
-      {/* Front Face */}
       <div
-        className="absolute inset-0 w-80 h-full rounded-lg overflow-hidden shadow-lg backface-hidden"
-        style={{ backgroundColor: 'var(--porcelain)', backfaceVisibility: 'hidden' }}
+        className="relative w-full h-full preserve-3d transition-transform duration-700 rounded-lg"
+        style={{ 
+          transformStyle: 'preserve-3d', 
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+        }}
       >
+        {/* Front Face */}
+        <div
+          className="absolute inset-0 w-full h-full rounded-lg overflow-hidden shadow-lg backface-hidden"
+          style={{ backgroundColor: 'var(--porcelain)', backfaceVisibility: 'hidden' }}
+        >
         {/* Image Container */}
         <div className="relative h-64 overflow-hidden" style={{ backgroundColor: 'var(--mist)' }}>
           <img
@@ -74,13 +85,11 @@ export default function ItemContainer({ image, title, description, price }: Item
             </h3>
           </Link>
 
-          {/* View Details Button */}
+          {/* View Details Link */}
           <button
             onClick={() => setIsFlipped(true)}
-            className="mb-4 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 hover:shadow-lg"
-            style={{ backgroundColor: 'var(--brand)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--gold)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--brand)')}
+            className="mb-4 text-sm font-semibold transition-colors hover:text-[var(--gold)] hover:underline"
+            style={{ color: 'var(--ink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
             View Details
           </button>
@@ -97,13 +106,13 @@ export default function ItemContainer({ image, title, description, price }: Item
 
           {/* Quantity Stepper */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--ink)' }}>
-              Quantity
-            </label>
             <div className="flex items-center justify-center gap-2 border-2 rounded-lg p-2" style={{ borderColor: 'var(--brand)' }}>
               <button
                 className="w-18 h-12 flex items-center justify-center font-bold text-xl transition-colors"
-                onClick={() => setQuantity(quantity - 1)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setQuantity(quantity - 1);
+                }}
                 style={{ color: 'var(--brand)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--brand)')}
@@ -114,7 +123,10 @@ export default function ItemContainer({ image, title, description, price }: Item
                 {quantity}
               </span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setQuantity(quantity + 1);
+                }}
                 className="w-18 h-12 flex items-center justify-center font-bold text-xl transition-colors"
                 style={{ color: 'var(--brand)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
@@ -127,7 +139,10 @@ export default function ItemContainer({ image, title, description, price }: Item
 
           {/* Add to Cart Button */}
           <button
-            onClick={handleAddToCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart();
+            }}
             className="w-full py-3 rounded-lg font-semibold text-white transition-all duration-300 hover:shadow-lg"
             style={{
               backgroundColor: isAdded ? '#10b981' : 'var(--brand)',
@@ -142,19 +157,22 @@ export default function ItemContainer({ image, title, description, price }: Item
         </div>
       </div>
 
-      {/* Back Face (Description Only) */}
-      <div
-        className="absolute inset-0 w-80 h-full rounded-lg overflow-hidden shadow-lg flex flex-col justify-center items-center p-6 backface-hidden cursor-pointer"
-        style={{
-          backgroundColor: '#000000',
-          backfaceVisibility: 'hidden',
-          transform: 'rotateY(180deg)',
-        }}
-        onClick={() => setIsFlipped(false)}
-      >
-        <p className="text-white text-sm leading-relaxed text-center">
-          {description}
-        </p>
+        {/* Back Face (Description Only) */}
+        <div
+          className="absolute inset-0 w-full h-full rounded-lg overflow-hidden shadow-lg flex flex-col justify-between p-6 backface-hidden cursor-pointer"
+          style={{
+            backgroundColor: '#000000',
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+          }}
+          onClick={() => setIsFlipped(false)}
+        >
+          <div className="text-white text-md font-semibold">×</div>
+          <p className="text-white text-sm leading-relaxed text-justify flex-1 flex items-center">
+            {description}
+          </p>
+          <div></div>
+        </div>
       </div>
     </div>
   );

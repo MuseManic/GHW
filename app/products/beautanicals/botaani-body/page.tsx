@@ -7,7 +7,7 @@ export default function BodyPage() {
       title="Botaani Body"
       subtitle="Everyday All-Over Hydrator"
       price={499}
-      image={"/body.jpg"}
+      image={"/bod.jpeg"}
       category="Beautanicals → Body"
       badges={['Vegan', 'Cruelty-free', 'Lightweight', '100ml']}
       slug="botaani-body"

@@ -22,7 +22,7 @@ export default function SerumPage() {
         subtitle="Lightweight Restorative Oil"
         price={799}
         category="Beautanicals → Serum"
-        image="/serum.jpg"
+        image="/Serum.jpeg"
         badges={['Vegan', 'Cruelty-free', 'Lightweight', '20ml']}
         slug="botaani-serum"
         description={`A few silky drops, and your skin remembers how to glow. Botaani Serum is a featherlight restorative oil intended to cushion, replenish and refine for a luminous, healthy-looking complexion. Jojoba and Olive squalane mimic skin's natural lipids for fast-absorbing comfort, while Rosehip oil and Vitamin E help protect from everyday dryness.
