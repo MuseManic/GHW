@@ -174,7 +174,7 @@ export default function NavBar() {
           <div className="relative">
             <button
               onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-              className="hover:text-[var(--gold)] transition text-lg sm:text-xl flex items-center gap-1"
+              className="hover:text-[var(--gold)] transition text-lg sm:text-xl flex items-center gap-1 text-black"
               title={user ? 'Account' : 'Login / Register'}
             >
               {user ? '👤' : 'Account'}
