@@ -71,7 +71,9 @@ export async function registerWordPressUser(
     let errorMessage = error.response?.data?.message || error.message || 'Registration failed';
     
     // Transform common WordPress password errors to user-friendly messages
-    if (errorMessage.includes('password') && errorMessage.includes('strong')) {
+    if (errorMessage.includes('Invalid user parameter(s)')) {
+      errorMessage = 'This email is already registered. Please login or use a different email.';
+    } else if (errorMessage.includes('password') && errorMessage.includes('strong')) {
       errorMessage = 'Password must be stronger. Please use at least 8 characters with a mix of letters, numbers, and symbols.';
     } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
       errorMessage = 'Password is too weak. Please use at least 8 characters with a mix of letters, numbers, and symbols.';

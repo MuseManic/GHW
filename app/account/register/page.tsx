@@ -17,6 +17,16 @@ export default function Register ()
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const passwordRequirements = {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumber: /[0-9]/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    };
+
+    const allRequirementsMet = Object.values(passwordRequirements).every(req => req);
+
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       setError('');
@@ -154,6 +164,68 @@ export default function Register ()
                 )}
               </button>
             </div>
+            {password && (
+              <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-xs font-medium text-gray-700 mb-2">Password Requirements:</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={passwordRequirements.minLength}
+                      readOnly
+                      className="w-4 h-4 rounded cursor-default"
+                    />
+                    <span className={`text-xs ${passwordRequirements.minLength ? 'text-green-600' : 'text-gray-600'}`}>
+                      At least 8 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={passwordRequirements.hasUpperCase}
+                      readOnly
+                      className="w-4 h-4 rounded cursor-default"
+                    />
+                    <span className={`text-xs ${passwordRequirements.hasUpperCase ? 'text-green-600' : 'text-gray-600'}`}>
+                      One uppercase letter (A-Z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={passwordRequirements.hasLowerCase}
+                      readOnly
+                      className="w-4 h-4 rounded cursor-default"
+                    />
+                    <span className={`text-xs ${passwordRequirements.hasLowerCase ? 'text-green-600' : 'text-gray-600'}`}>
+                      One lowercase letter (a-z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={passwordRequirements.hasNumber}
+                      readOnly
+                      className="w-4 h-4 rounded cursor-default"
+                    />
+                    <span className={`text-xs ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-gray-600'}`}>
+                      One number (0-9)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={passwordRequirements.hasSpecialChar}
+                      readOnly
+                      className="w-4 h-4 rounded cursor-default"
+                    />
+                    <span className={`text-xs ${passwordRequirements.hasSpecialChar ? 'text-green-600' : 'text-gray-600'}`}>
+                      One special character (!@#$%^&* etc)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Confirm Password */}

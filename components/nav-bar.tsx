@@ -177,7 +177,7 @@ export default function NavBar() {
               className="hover:text-[var(--gold)] transition text-lg sm:text-xl flex items-center gap-1 text-black"
               title={user ? 'Account' : 'Login / Register'}
             >
-              {user ? '👤' : 'Account'}
+              {user ? '👤' : '👤'}
             </button>
             {accountDropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg z-50">

@@ -65,13 +65,15 @@ export default function ItemContainer({ image, title, description, price, href }
           style={{ backgroundColor: 'var(--porcelain)', backfaceVisibility: 'hidden' }}
         >
         {/* Image Container */}
-        <div className="relative h-64 overflow-hidden" style={{ backgroundColor: 'var(--mist)' }}>
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
+        <Link href={href || (title.includes('Cannafusion') ? `/products/cannafusion` : `/products/beautanicals/${title.toLowerCase().replace(/\s+/g, '-')}`)}>
+          <div className="relative h-64 overflow-hidden cursor-pointer" style={{ backgroundColor: 'var(--mist)' }}>
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </Link>
 
         {/* Content Container */}
         <div className="p-6">
