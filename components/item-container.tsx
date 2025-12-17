@@ -52,6 +52,22 @@ export default function ItemContainer({ image, title, description, price, href }
         e.currentTarget.style.boxShadow = '0 0 0 0px var(--gold)';
       }}
     >
+      <style>{`
+        @keyframes slideInFromLeft {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .tagline-text {
+          animation: slideInFromLeft 0.6s ease-out forwards;
+        }
+      `}</style>
+
       <div
         className="relative w-full h-full preserve-3d transition-transform duration-700 rounded-lg"
         style={{ 
@@ -170,10 +186,14 @@ export default function ItemContainer({ image, title, description, price, href }
           onClick={() => setIsFlipped(false)}
         >
           <div className="text-white text-md font-semibold">×</div>
-          <p className="text-white text-sm leading-relaxed text-justify flex-1 flex items-center">
+          <p className="text-white text-md leading-relaxed text-justify flex-1 flex items-center">
             {description}
           </p>
-          <div></div>
+          <div className="tagline-text">
+            <p className="text-white text-sm font-semibold leading-tight">
+              Back to Earth.<br />Forward in Thought.
+            </p>
+          </div>
         </div>
       </div>
     </div>

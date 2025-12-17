@@ -16,12 +16,42 @@ export default function TermsPage() {
         {/* Company Info */}
         <h2 className="text-5xl font-bold text-gray-900 mb-8">Contact Us</h2>
         <section id="contact" className="mb-16 bg-gray-50 rounded-lg p-8">
-          <div className="space-y-3 text-base text-gray-700">
+          <div className="space-y-3 text-base text-gray-700 mb-8">
             <p><strong>Company:</strong> Global Health Wellness Sales (Pty) Ltd</p>
             <p><strong>Registration No:</strong> 2021/408077/07</p>
             <p><strong>VAT:</strong> 4090300155</p>
-            <p><strong>Contact:</strong> sales@ghwsales.com</p>
-            <p><strong>Phone and WhatsApp: </strong>+27 64 799 9954</p>
+            <p><strong>Email:</strong> sales@ghwsales.com</p>
+            <p><strong>Phone and WhatsApp:</strong> +27 64 799 9954</p>
+
+          </div>
+
+          <div className="mb-8">
+            <p className="font-semibold text-gray-900 mb-3">What to include when you contact us:</p>
+            <ul className="space-y-2 text-gray-700 ml-4">
+              <li className="flex gap-4">
+                <span className="text-gray-400">•</span>
+                <span>Order number (if applicable)</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-gray-400">•</span>
+                <span>Full name, phone, and delivery address</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-gray-400">•</span>
+                <span>Summary of the query (e.g., delivery, product question, return)</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-gray-400">•</span>
+                <span>For quality issues: clear photos and a brief description</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-3">COAs:</p>
+            <p className="text-gray-700">
+              Available on request. Typical turnaround 1–2 business days from receipt of your email.
+            </p>
           </div>
         </section>
 
@@ -102,55 +132,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        {/* Contact Us */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-light text-gray-900 mb-6">Contact Us</h2>
-          <p className="text-gray-700 mb-6">
-            We're here to help with orders, deliveries, COAs, and general questions.
-          </p>
-          <div className="space-y-4 text-gray-700 mb-8">
-            <p><strong>Email:</strong> sales@ghwsales.com</p>
-            <p><strong>Phone:</strong> +27 64 799 9954</p>
-            <p><strong>WhatsApp:</strong> +27 64 799 9954</p>
-            <p><strong>Hours:</strong> Mon–Fri, 08:00–16:00 (SAST)</p>
-          </div>
-          
-          <div className="mb-8">
-            <p className="font-semibold text-gray-900 mb-3">Returns address (no public collections):</p>
-            <p className="text-gray-700">
-              Unit 6B Romead Business Park, 19 Malone Road, Maxmead, Pinetown, Durban, KwaZulu-Natal, South Africa
-            </p>
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900 mb-3">COAs:</p>
-            <p className="text-gray-700">
-              Available on request. Typical turnaround 1–2 business days from receipt of your email.
-            </p>
-          </div>
-
-          <div className="mt-8 bg-gray-50 rounded-lg p-6">
-            <p className="font-semibold text-gray-900 mb-3">What to include when you contact us:</p>
-            <ul className="space-y-2 text-gray-700">
-              <li className="flex gap-4">
-                <span className="text-gray-400">•</span>
-                <span>Order number (if applicable)</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-gray-400">•</span>
-                <span>Full name, phone, and delivery address</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-gray-400">•</span>
-                <span>Summary of the query (e.g., delivery, product question, return)</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-gray-400">•</span>
-                <span>For quality issues: clear photos and a brief description</span>
-              </li>
-            </ul>
-          </div>
-        </section>
+       
 
         {/* Privacy Policy */}
         <section id="privacy" className="mb-12">
@@ -170,23 +152,9 @@ export default function TermsPage() {
             We aim to make returns straightforward and fair while complying with South African law.
           </p>
 
-      <div className="mb-8">
-          <h2 className="text-2xl font-light text-gray-900 mb-6">Returns & Cooling-off</h2>
-          <ul className="space-y-4 text-gray-700">
-            <li className="flex gap-4">
-              <span className="text-gray-400 mt-1">•</span>
-              <span>ECTA 7-day cooling-off applies to unopened/unused goods purchased online.</span>
-            </li>
-            <li className="flex gap-4">
-              <span className="text-gray-400 mt-1">•</span>
-              <span>Beyond ECTA cooling-off, we do not accept voluntary returns.</span>
-            </li>
-            <li className="flex gap-4">
-              <span className="text-gray-400 mt-1">•</span>
-              <span><strong>Defective goods (CPA):</strong> Repair/replace/refund within 6 months of delivery, per assessment.</span>
-            </li>
-          </ul>
-        </div>
+          
+
+    
 
           {/* Cooling-off */}
           <div className="mb-8">
@@ -200,7 +168,7 @@ export default function TermsPage() {
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Defective Goods (CPA)</h3>
             <p className="text-gray-700">
-              If your product is defective, we'll repair, replace, or refund within 6 months of delivery once assessed. Contact sales@ghwsales.com with details and photos.
+              If your product is defective, we'll replace, or refund within 6 months of delivery once assessed. Contact sales@ghwsales.com with details and photos.
             </p>
           </div>
 
@@ -225,6 +193,7 @@ export default function TermsPage() {
               </li>
             </ol>
           </div>
+          <p><strong>Address:</strong> Unit 6B Romead Business Park, 19 Malone Road, Maxmead, Pinetown, Durban, KwaZulu-Natal, South Africa</p>
 
           {/* Exclusions & Notes */}
           <div className="bg-gray-50 rounded-lg p-6">

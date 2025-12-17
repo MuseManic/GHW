@@ -61,7 +61,7 @@ export default function AdditionalInfoPage() {
           `}</style>
           
           <div className="flex flex-col items-center text-center mb-8 tagline-animate">
-            <h1 className="text-6xl font-bold text-gray-900 mb-2">Back to Nature.</h1>
+            <h1 className="text-6xl font-bold text-gray-900 mb-2">Back to Earth.</h1>
             <p className="text-6xl font-bold text-gray-900">Forward in Thought.</p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function AdditionalInfoPage() {
             <div className="border-l-4 border-gray-200 pl-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Botaani Cannafusion — 15 mL</h3>
               <p className="text-gray-700 mb-3">
-                A minimal, glycerin-based wellness oil containing Trace amounts of THCa in 99.99% BP-grade glycerin. Intended for adults seeking simple, non-psychoactive* support for everyday balance. 21+ only. Avoid heat exposure.
+                A minimal, glycerin-based wellness oil containing Trace amounts of THCa in 99.99% BP-grade glycerin. Intended for adults seeking simple, non-psychoactive* support for everyday balance. 18+ only. Avoid heat exposure.
               </p>
               <p className="text-sm text-gray-600 italic">
                 Statements not evaluated by SAHPRA. Not intended to diagnose, treat, cure or prevent disease.
@@ -120,7 +120,7 @@ export default function AdditionalInfoPage() {
 
             {/* Beautanicals */}
             <div className="border-l-4 border-gray-200 pl-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Botaani Beautanicals — Serum, Face, Body & Cleanse</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Botaani Beautanicals — Serum (20 mL), Face (100 mL), Body (100 mL)</h3>
               <p className="text-gray-700">
                 Vegan, cruelty-free skincare designed for daily comfort and glow. Lightweight textures, clean botanicals, and straightforward directions. May assist with hydration, barrier comfort and a healthy-looking sheen—without harsh shortcuts.
               </p>
@@ -158,8 +158,6 @@ export default function AdditionalInfoPage() {
             <span>GMP-licensed manufacturing</span>
             <span>•</span>
             <span>COAs for every batch</span>
-            <span>•</span>
-            <span>Typical SA delivery ~3 business days</span>
             <span>•</span>
             <span>Shelf life up to 2 years</span>
           </div>
