@@ -105,7 +105,7 @@ export function verifyPayFastSignature(
  * Get PayFast configuration from environment
  */
 export function getPayFastConfig() {
-  const isSandbox = process.env.PAYFAST_SANDBOX || false;
+  const isSandbox = process.env.PAYFAST_SANDBOX || true;
   
   return {
     merchantId: process.env.PAYFAST_MERCHANT_ID || '',
