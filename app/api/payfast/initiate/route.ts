@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       merchantId: config.merchantId,
       hasMerchantKey: !!config.merchantKey,
       hasPassphrase: !!config.passphrase,
-      sandbox: config.sandbox
+      mode: 'production'
     });
 
     // Create payment data
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       merchant_id: paymentData.merchant_id,
       amount: paymentData.amount,
       m_payment_id: paymentData.m_payment_id,
-      sandbox: config.sandbox
+      mode: 'production'
     });
 
     return NextResponse.json({
