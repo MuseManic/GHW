@@ -313,3 +313,114 @@ export async function clearAuthCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete('auth_token');
 }
+
+/**
+ * Reset user password in WordPress
+ * This requires the user to be authenticated first
+ */
+export async function resetWordPressUserPassword(
+  email: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const basicAuth = Buffer.from(`${WORDPRESS_USERNAME}:${WORDPRESS_PASSWORD}`).toString('base64');
+    
+    // First, get the user by email
+    console.log('🔍 Searching for user with email:', email);
+    const userResponse = await axios.get(
+      `${WORDPRESS_API_URL}/wp/v2/users`,
+      {
+        params: {
+          search: email,
+          _fields: 'id,username,email,slug',
+        },
+        headers: {
+          'Authorization': `Basic ${basicAuth}`,
+        },
+      }
+    );
+
+    if (!userResponse.data || userResponse.data.length === 0) {
+      console.error('❌ User not found with email:', email);
+      return {
+        success: false,
+        message: 'User not found. Please check your email.',
+      };
+    }
+
+    const user = userResponse.data[0];
+    const username = user.username || user.slug;
+    console.log('✅ Found user:', { id: user.id, username });
+
+    // Verify current password by getting JWT token
+    console.log('🔐 Verifying current password');
+    let jwtToken: string;
+    try {
+      const jwtResponse = await axios.post(
+        `${WORDPRESS_API_URL}/jwt-auth/v1/token`,
+        {
+          username: username,
+          password: currentPassword,
+        }
+      );
+
+      if (!jwtResponse.data.token) {
+        return {
+          success: false,
+          message: 'Current password is incorrect.',
+        };
+      }
+
+      jwtToken = jwtResponse.data.token;
+      console.log('✅ Current password verified');
+    } catch (jwtError: any) {
+      console.error('❌ JWT authentication failed:', jwtError.response?.data);
+      return {
+        success: false,
+        message: 'Current password is incorrect.',
+      };
+    }
+
+    // Update password using authenticated request
+    console.log('🔄 Updating password for user ID:', user.id);
+    const updateResponse = await axios.post(
+      `${WORDPRESS_API_URL}/wp/v2/users/${user.id}`,
+      {
+        password: newPassword,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('✅ Password updated successfully');
+    return {
+      success: true,
+      message: 'Password reset successfully',
+    };
+  } catch (error: any) {
+    console.error('WordPress password reset error:', error.response?.data || error.message);
+    
+    let errorMessage = error.response?.data?.message || error.message || 'Password reset failed';
+    
+    // Transform common WordPress password errors
+    if (errorMessage.includes('password') && errorMessage.includes('strong')) {
+      errorMessage = 'New password must be stronger. Please use at least 8 characters with a mix of letters, numbers, and symbols.';
+    } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
+      errorMessage = 'New password is too weak. Please use at least 8 characters with a mix of letters, numbers, and symbols.';
+    } else if (errorMessage.includes('rest_user_invalid_id')) {
+      errorMessage = 'User not found. Please check your email.';
+    } else if (errorMessage.includes('rest_cannot_edit')) {
+      errorMessage = 'You do not have permission to reset this password.';
+    }
+    
+    return {
+      success: false,
+      message: errorMessage,
+    };
+  }
+}

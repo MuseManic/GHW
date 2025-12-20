@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons/faCircleUser';
 
 interface Product {
   id: string;
@@ -177,7 +180,7 @@ export default function NavBar() {
               className="hover:text-[var(--gold)] transition text-lg sm:text-xl flex items-center gap-1 text-black"
               title={user ? 'Account' : 'Login / Register'}
             >
-              {user ? '👤' : '👤'}
+              {user ? <FontAwesomeIcon icon={faCircleUser} className="w-5 h-5" /> : <FontAwesomeIcon icon={faCircleUser} className="w-5 h-5" />}
             </button>
             {accountDropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg z-50">
@@ -223,15 +226,15 @@ export default function NavBar() {
             )}
           </div>
           <button 
-            className={`cursor-pointer hover:text-gray-300 transition text-base sm:text-lg relative ${cartAnimating ? 'cart-shake' : ''}`}
+            className={`cursor-pointer hover:text-[var(--gold)] transition text-base sm:text-lg relative ${cartAnimating ? 'cart-shake' : ''}`}
             style={{ cursor: 'pointer' }}
             onClick={() => {
               setCartAnimating(true);
               setTimeout(() => setCartAnimating(false), 600);
             }}
           >
-            <Link href="/cart" className="hover:text-gray-300 transition flex items-center">
-              🛒
+            <Link href="/cart" className="hover:text-[var(--gold)] transition flex items-center text-black">
+              <FontAwesomeIcon icon={faCartShopping} className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {cartCount}
@@ -317,10 +320,10 @@ export default function NavBar() {
                   </Link>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="ml-2 text-lg hover:scale-110 transition"
+                    className="ml-2 hover:scale-110 transition"
                     title="Add to cart"
                   >
-                    🛒
+                    <FontAwesomeIcon icon={faCartShopping} className="w-5 h-5" />
                   </button>
                 </div>
               ))}
@@ -329,13 +332,17 @@ export default function NavBar() {
 
           {/* Beautanicals Section */}
           <div>
-            <Link
+            {/* <Link
               href="/products/beautanicals"
               onClick={() => setSidebarOpen(false)}
               className="text-lg font-semibold text-gray-900 mb-4 block hover:text-amber-600 transition"
-            >
-              Beautanicals
-            </Link>
+            > */}
+            <h2
+              onClick={() => setSidebarOpen(false)}
+              className="text-lg font-semibold text-gray-900 mb-4 block hover:text-amber-600 transition"
+            >Beautanicals</h2>
+              
+            {/* </Link> */}
             <div className="space-y-3">
               {products.beautanicals.map((product) => (
                 <div
@@ -353,17 +360,17 @@ export default function NavBar() {
                   </Link>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="ml-2 text-lg hover:scale-110 transition"
+                    className="ml-2 hover:scale-110 transition"
                     title="Add to cart"
                   >
-                    🛒
+                    <FontAwesomeIcon icon={faCartShopping} className="w-5 h-5" />
                   </button>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Animal Section */}
+        
           {/* <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Animal</h3>
             <div className="space-y-3">
