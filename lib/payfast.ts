@@ -105,19 +105,12 @@ export function verifyPayFastSignature(
  * Get PayFast configuration from environment
  */
 export function getPayFastConfig() {
-  const isSandbox = process.env.PAYFAST_SANDBOX || true;
-  
   return {
     merchantId: process.env.PAYFAST_MERCHANT_ID || '',
     merchantKey: process.env.PAYFAST_MERCHANT_KEY || '',
     passphrase: process.env.PAYFAST_PASSPHRASE || '',
-    sandbox: isSandbox,
-    host: isSandbox 
-      ? 'https://sandbox.payfast.co.za'
-      : 'https://www.payfast.co.za',
-    processUrl: isSandbox
-      ? 'https://sandbox.payfast.co.za/eng/process'
-      : 'https://www.payfast.co.za/eng/process'
+    host: 'https://www.payfast.co.za',
+    processUrl: 'https://www.payfast.co.za/eng/process'
   };
 }
 
