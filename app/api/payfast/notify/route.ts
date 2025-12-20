@@ -38,9 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify payment status with PayFast server
-    const pfHost = config.sandbox 
-      ? 'https://sandbox.payfast.co.za'
-      : 'https://www.payfast.co.za';
+    const pfHost = 'https://www.payfast.co.za';
 
     const pfParamString = new URLSearchParams(data).toString();
     
@@ -61,10 +59,7 @@ export async function POST(request: NextRequest) {
       }
     } catch (validationError) {
       console.error('PayFast validation error:', validationError);
-      // Continue anyway in sandbox mode
-      if (!config.sandbox) {
-        return NextResponse.json({ error: 'Validation error' }, { status: 500 });
-      }
+      return NextResponse.json({ error: 'Validation error' }, { status: 500 });
     }
 
     // Payment is valid
