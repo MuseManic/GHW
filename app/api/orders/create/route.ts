@@ -8,6 +8,16 @@ interface OrderLineItem {
   quantity: number;
 }
 
+interface ShippingLine {
+  method_id: string;
+  method_title: string;
+  total: string;
+}
+
+interface CouponLine {
+  code: string;
+}
+
 interface CreateOrderRequest {
   billing: {
     first_name: string;
@@ -31,6 +41,8 @@ interface CreateOrderRequest {
   };
   line_items: OrderLineItem[];
   customer_id?: number;
+  shipping_lines?: ShippingLine[];
+  coupon_lines?: CouponLine[];
 }
 
 export async function POST(request: NextRequest) {
@@ -42,19 +54,29 @@ export async function POST(request: NextRequest) {
       items: body.line_items.length
     });
 
+    const wcOrder: Record<string, unknown> = {
+      payment_method: 'payfast',
+      payment_method_title: 'PayFast',
+      set_paid: false,
+      billing: body.billing,
+      shipping: body.shipping,
+      line_items: body.line_items,
+      customer_id: body.customer_id || 0,
+      status: 'pending'
+    };
+
+    if (body.shipping_lines?.length) {
+      wcOrder.shipping_lines = body.shipping_lines;
+    }
+
+    if (body.coupon_lines?.length) {
+      wcOrder.coupon_lines = body.coupon_lines;
+    }
+
     // Create order in WooCommerce
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wc/v3/orders`,
-      {
-        payment_method: 'payfast',
-        payment_method_title: 'PayFast',
-        set_paid: false,
-        billing: body.billing,
-        shipping: body.shipping,
-        line_items: body.line_items,
-        customer_id: body.customer_id || 0,
-        status: 'pending'
-      },
+      wcOrder,
       {
         auth: {
           username: process.env.CONSUMER_KEY || '',

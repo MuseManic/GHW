@@ -71,6 +71,16 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponHint, setCouponHint] = useState<string | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  const cartSubtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   // Calculate shipping rates
   const calculateShipping = useCallback(async () => {
@@ -214,6 +224,51 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const applyCoupon = async () => {
+    const code = couponInput.trim();
+    if (!code) {
+      setCouponError('Enter a coupon code');
+      setCouponHint(null);
+      return;
+    }
+    setCouponError(null);
+    setCouponHint(null);
+    setValidatingCoupon(true);
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const result = await res.json();
+      if (result.success && result.code) {
+        setAppliedCoupon(result.code);
+        setCouponInput('');
+        const label =
+          result.discount_type === 'percent' && result.amount
+            ? `${result.amount}% off`
+            : result.amount
+              ? `R${result.amount} off`
+              : 'Applied';
+        setCouponHint(label);
+      } else {
+        setAppliedCoupon(null);
+        setCouponError(result.error || 'Invalid coupon');
+      }
+    } catch {
+      setCouponError('Could not verify coupon');
+      setAppliedCoupon(null);
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const clearCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponHint(null);
+    setCouponError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -284,6 +339,9 @@ export default function CheckoutPage() {
             method_title: selectedShipping.title,
             total: selectedShipping.cost.toFixed(2)
           }] : [],
+          coupon_lines: appliedCoupon
+            ? [{ code: appliedCoupon }]
+            : [],
           customer_id: user?.id || 0
         })
       });
@@ -292,17 +350,27 @@ export default function CheckoutPage() {
 
       if (data.success) {
         console.log('Order created:', data);
-        
-        // Calculate total including shipping
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
         const shippingCost = selectedShipping ? selectedShipping.cost : 0;
-        const totalAmount = subtotal + shippingCost;
-        
+        const fallbackTotal = cartSubtotal + shippingCost;
+        let totalAmount = parseFloat(String(data.total));
+        if (Number.isNaN(totalAmount) || totalAmount < 0) {
+          totalAmount = fallbackTotal;
+        }
+
+        if (totalAmount <= 0) {
+          alert(
+            'Your order total is R0.00 after discounts. PayFast cannot take a zero payment. Please contact us with your order number to complete checkout.'
+          );
+          setSubmitting(false);
+          return;
+        }
+
         console.log('Payment calculation:', {
-          subtotal,
+          subtotal: cartSubtotal,
           shipping: shippingCost,
           total: totalAmount,
-          wocommerceTotal: data.total
+          woocommerceTotal: data.total
         });
         
         // Initiate PayFast payment
@@ -683,6 +751,63 @@ export default function CheckoutPage() {
                   <div className="text-gray-600">
                     <p>Please enter your shipping address to see available shipping options.</p>
                   </div>
+                )}
+              </div>
+
+              {/* Coupon */}
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Promotional code</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  Enter a code from your email and we will confirm it with the store before you pay.
+                </p>
+                {appliedCoupon ? (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+                    <div>
+                      <p className="font-semibold text-gray-900">{appliedCoupon}</p>
+                      {couponHint && (
+                        <p className="text-sm text-gray-700">{couponHint}</p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={clearCoupon}
+                      className="text-sm font-semibold text-amber-800 hover:text-amber-950"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value);
+                        if (couponError) setCouponError(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          void applyCoupon();
+                        }
+                      }}
+                      placeholder="Coupon code"
+                      autoComplete="off"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                    <button
+                      type="button"
+                      disabled={validatingCoupon}
+                      onClick={() => void applyCoupon()}
+                      className="px-6 py-2 rounded-lg font-semibold text-white transition-all disabled:opacity-50"
+                      style={{ backgroundColor: 'var(--brand)' }}
+                    >
+                      {validatingCoupon ? 'Checking…' : 'Apply'}
+                    </button>
+                  </div>
+                )}
+                {couponError && (
+                  <p className="text-red-600 text-sm mt-2">{couponError}</p>
                 )}
               </div>
 
