@@ -6,36 +6,23 @@ import ItemContainer from '@/components/item-container';
 export default function Home() {
     const sliderImages = [
         {
-            src: '/images/slider5.jpg',
-            alt: 'Slider One',
+            src: '/images/hero1.png',
+            alt: 'Hero slide one',
             title: 'Moving forward',
             description: 'We are here to help you move forward'
         },
-        // {
-        //     src: '/images/slider2.jpg',
-        //     alt: 'Slider Two',
-        //     title: 'Ground Focused',
-        //     description: 'Get the natural supplements you need'
-        // },
         {
-            src: '/images/slider3.jpg',
-            alt: 'Slider Three',
+            src: '/images/hero2.png',
+            alt: 'Hero slide two',
+            title: 'Ground Focused',
+            description: 'Get the natural supplements you need'
+        },
+        {
+            src: '/images/hero3.png',
+            alt: 'Hero slide three',
             title: 'Another Title here',
             description: 'another description should you need it'
         },
-            {
-            src: 'sliderTwo.jpg',
-            alt: 'Slider Four',
-            title: 'Moving forward',
-            description: 'We are here to help you move forward'
-        },
-        {
-            src: '/images/slider1.jpg',
-            alt: 'Slider Five',
-            title: 'Ground Focused',
-            description: 'Get the natural supplements you need'
-        }
-
     ];
 
     return (
