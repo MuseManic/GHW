@@ -329,9 +329,14 @@ export default function CheckoutPage() {
             if (!productId || productId === 0) {
               throw new Error(`Invalid product ID: ${item.id}`);
             }
+            const lineTotal = (item.price * item.quantity).toFixed(2);
             return {
               product_id: productId,
-              quantity: item.quantity
+              quantity: item.quantity,
+              // Explicit totals so PayFast/WooCommerce charge product price, not shipping alone
+              // when WooCommerce catalog prices are blank or R0.
+              subtotal: lineTotal,
+              total: lineTotal
             };
           }),
           shipping_lines: selectedShipping ? [{
@@ -355,6 +360,17 @@ export default function CheckoutPage() {
         const fallbackTotal = cartSubtotal + shippingCost;
         let totalAmount = parseFloat(String(data.total));
         if (Number.isNaN(totalAmount) || totalAmount < 0) {
+          totalAmount = fallbackTotal;
+        } else if (
+          !appliedCoupon &&
+          cartSubtotal > 0 &&
+          totalAmount <= shippingCost + 0.01
+        ) {
+          // Guard: WooCommerce returned shipping-only despite cart having priced products
+          console.warn('WooCommerce total looked like shipping-only; using cart subtotal + shipping', {
+            woocommerceTotal: data.total,
+            fallbackTotal
+          });
           totalAmount = fallbackTotal;
         }
 

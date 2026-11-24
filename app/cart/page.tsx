@@ -9,8 +9,8 @@ export default function CartPage() {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 500 ? 0 : 100;
-  const total = subtotal + shipping;
+  // Shipping is calculated at checkout — cart total is products only
+  const total = subtotal;
 
   return (
     <>

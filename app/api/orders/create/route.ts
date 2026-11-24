@@ -6,6 +6,9 @@ export const dynamic = 'force-dynamic';
 interface OrderLineItem {
   product_id: number;
   quantity: number;
+  /** Unit/line amounts from the storefront cart — required when WooCommerce catalog prices are missing/zero */
+  subtotal?: string;
+  total?: string;
 }
 
 interface ShippingLine {

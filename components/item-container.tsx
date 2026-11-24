@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { getProductId } from '@/lib/product-ids';
 
 interface ItemContainerProps {
   image: string;
@@ -10,17 +11,20 @@ interface ItemContainerProps {
   description: string;
   price: number;
   href?: string;
+  productId?: number | string;
 }
 
-export default function ItemContainer({ image, title, description, price, href }: ItemContainerProps) {
+export default function ItemContainer({ image, title, description, price, href, productId }: ItemContainerProps) {
   const [quantity, setQuantity] = useState(1);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
+    const slug = title.toLowerCase().replace(/\s+/g, '-');
+    const resolvedId = getProductId(productId ?? slug);
     addToCart({
-      id: title.toLowerCase().replace(/\s+/g, '-'),
+      id: resolvedId ? String(resolvedId) : slug,
       name: title,
       price,
       quantity,
